@@ -1,11 +1,13 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'path';
-import { seed } from './database/seed';
+import { seed, seedTables } from './database/seed';
 import { registerMenuHandlers } from './handlers/menuHandlers';
+import { registerTableHandlers } from './handlers/tableHandlers';
 import { registerOrderHandlers } from './handlers/orderHandlers';
 import { registerConfigHandlers } from './handlers/configHandlers';
 import { registerSyncHandlers } from './handlers/syncHandlers';
 import { registerPrinterHandlers } from './handlers/printerHandlers';
+import { registerAuthHandlers, ensureDefaultAdminPin } from './handlers/authHandlers';
 import { startSyncTimer, runSync } from './services/syncService';
 
 const isDev = process.env.ELECTRON_DEV === '1';
@@ -32,8 +34,12 @@ function createWindow() {
 
 app.whenReady().then(() => {
   seed();
+  seedTables();
+  ensureDefaultAdminPin();
   registerConfigHandlers();
+  registerAuthHandlers();
   registerMenuHandlers();
+  registerTableHandlers();
   registerOrderHandlers();
   registerSyncHandlers();
   registerPrinterHandlers();

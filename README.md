@@ -55,5 +55,9 @@ node -v   # harus v16.17.0
 - [x] Tahap 7: Cloud multi-tenant (Supabase + RLS + auth register/login)
 - [x] Tahap 8: Aktivasi tenant via SetupWizard (kasir desktop → cloud)
 - [x] Tahap 9: Sinkronisasi (orders + menu via sync_queue / api, idempoten)
+- [x] Tahap 10: Login kasir (PIN)
+- [x] Tahap 11: Jenis order (Makan di Tempat / Bawa Pulang) + pilih meja
+- [x] Tahap 12: Riwayat transaksi + detail + cetak ulang
+- [x] Tahap 13: Packaging installer (electron-builder NSIS)
 
 Note: Tahap 0 (validasi hardware printer) tertunda sampai uji di PC Windows 7 dengan printer AnyPOS.

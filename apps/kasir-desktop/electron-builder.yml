@@ -1,0 +1,31 @@
+appId: com.pos.rumahmakan
+productName: POS Rumah Makan
+copyright: Copyright © 2026
+
+directories:
+  output: release
+  buildResources: build
+
+files:
+  - dist/**/*
+  - package.json
+
+asar: true
+
+win:
+  target:
+    - target: nsis
+      arch:
+        - ia32
+  executableName: POSRumahMakan
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: POS Rumah Makan
+  artifactName: POS Rumah Makan Setup ${version} (${arch}).${ext}
+
+electronDownload:
+  mirror: https://npmmirror.com/mirrors/electron/

@@ -39,3 +39,19 @@ export function seed() {
   seedAll();
   console.log('Seed data berhasil dimasukkan.');
 }
+
+export function seedTables() {
+  const existingTables = db.prepare('SELECT COUNT(*) as count FROM tables').get() as { count: number };
+  if (existingTables.count > 0) return;
+
+  const insertTable = db.prepare(
+    'INSERT INTO tables (id, nomor_meja, kapasitas, status) VALUES (?, ?, ?, ?)'
+  );
+  const insertAll = db.transaction(() => {
+    for (let i = 1; i <= 6; i++) {
+      insertTable.run(randomUUID(), String(i), 4, 'KOSONG');
+    }
+  });
+  insertAll();
+  console.log('Seed meja berhasil dimasukkan.');
+}

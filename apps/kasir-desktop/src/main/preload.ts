@@ -5,6 +5,14 @@ contextBridge.exposeInMainWorld('api', {
     get: (key: string) => ipcRenderer.invoke('config:get', key),
     set: (key: string, value: string) => ipcRenderer.invoke('config:set', key, value),
   },
+  auth: {
+    login: (userId: string, pin: string) => ipcRenderer.invoke('auth:login', userId, pin),
+    current: () => ipcRenderer.invoke('auth:current'),
+    logout: () => ipcRenderer.invoke('auth:logout'),
+  },
+  table: {
+    list: () => ipcRenderer.invoke('table:list'),
+  },
   menu: {
     list: () => ipcRenderer.invoke('menu:list'),
     categories: () => ipcRenderer.invoke('menu:categories'),
@@ -17,6 +25,23 @@ contextBridge.exposeInMainWorld('api', {
   },
   order: {
     create: (data: unknown) => ipcRenderer.invoke('order:create', data),
+    history: (options?: unknown) => ipcRenderer.invoke('order:history', options),
+    detail: (orderId: string) => ipcRenderer.invoke('order:detail', orderId),
+  },
+  report: {
+    daily: (tanggal: string) => ipcRenderer.invoke('report:daily', tanggal),
+  },
+  user: {
+    list: () => ipcRenderer.invoke('user:list'),
+    create: (nama: string, pin: string) => ipcRenderer.invoke('user:create', nama, pin),
+    rename: (id: string, nama: string) => ipcRenderer.invoke('user:rename', id, nama),
+    updatePin: (id: string, pin: string) => ipcRenderer.invoke('user:updatePin', id, pin),
+    delete: (id: string) => ipcRenderer.invoke('user:delete', id),
+  },
+  app: {
+    getInfo: () => ipcRenderer.invoke('app:getInfo'),
+    updateInfo: (info: { nama_usaha: string; alamat_usaha: string; telp_usaha: string }) =>
+      ipcRenderer.invoke('app:updateInfo', info),
   },
   sync: {
     run: () => ipcRenderer.invoke('sync:run'),

@@ -11,6 +11,7 @@
     "dev:renderer": "vite --config vite.config.ts",
     "dev:main": "tsc && set ELECTRON_DEV=1 && electron dist/main/index.js",
     "rebuild:sqlite": "electron-rebuild -f -w better-sqlite3",
+    "package": "npm run build:all && electron-builder --win",
     "start": "npm run build:all && electron dist/main/index.js",
     "typecheck": "tsc --noEmit"
   },

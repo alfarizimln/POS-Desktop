@@ -7,6 +7,14 @@ declare global {
         get: (key: string) => Promise<string | null>;
         set: (key: string, value: string) => Promise<boolean>;
       };
+      auth: {
+        login: (userId: string, pin: string) => Promise<{ success: boolean; user?: { id: string; nama: string; role: string }; error?: string }>;
+        current: () => Promise<{ success: boolean; user: { id: string; nama: string; role: string } | null }>;
+        logout: () => Promise<{ success: boolean }>;
+      };
+      table: {
+        list: () => Promise<Array<{ id: string; nomor_meja: string; kapasitas: number | null; status: string }>>;
+      };
       menu: {
         list: () => Promise<Array<{
           id: string; nama: string; kategori_id: string;
@@ -33,6 +41,50 @@ declare global {
           metode_pembayaran: 'TUNAI' | 'DEBIT' | 'QRIS';
           jumlah_dibayar: number;
         }) => Promise<{ success: boolean; order_id?: string; kembalian?: number; error?: string }>;
+        history: (options?: { limit?: number }) => Promise<{
+          success: boolean;
+          orders: Array<{
+            id: string; order_type: string; table_id: string | null; nomor_meja: string | null;
+            waktu_buka: string; total: number | null; jumlah_bayar: number | null;
+            kembalian: number | null; metode: string | null; sync_status: string;
+          }>;
+        }>;
+        detail: (orderId: string) => Promise<{
+          success: boolean;
+          error?: string;
+          order?: {
+            id: string; order_type: string; table_id: string | null; nomor_antrian: string | null;
+            waktu_buka: string; waktu_tutup: string | null; sync_status: string; nomor_meja: string | null;
+            metode: string | null; jumlah_bayar: number | null; kembalian: number | null;
+            items: Array<{ nama: string; qty: number; catatan: string | null; harga: number }>;
+          };
+        }>;
+      };
+      report: {
+        daily: (tanggal: string) => Promise<{
+          success: boolean;
+          error?: string;
+          tanggal: string;
+          summary: { jumlah_order: number; total_penjualan: number };
+          byMetode: Array<{ metode: string; jumlah: number; nominal: number }>;
+          byType: Array<{ tipe: string; jumlah: number; nominal: number }>;
+        }>;
+      };
+      user: {
+        list: () => Promise<{ success: boolean; users: Array<{ id: string; nama: string; role: string }> }>;
+        create: (nama: string, pin: string) => Promise<{ success: boolean; error?: string; id?: string }>;
+        rename: (id: string, nama: string) => Promise<{ success: boolean; error?: string }>;
+        updatePin: (id: string, pin: string) => Promise<{ success: boolean; error?: string }>;
+        delete: (id: string) => Promise<{ success: boolean; error?: string }>;
+      };
+      app: {
+        getInfo: () => Promise<{
+          success: boolean;
+          error?: string;
+          info: { nama_usaha: string; alamat_usaha: string; telp_usaha: string };
+        }>;
+        updateInfo: (info: { nama_usaha: string; alamat_usaha: string; telp_usaha: string }) =>
+          Promise<{ success: boolean; error?: string }>;
       };
       sync: {
         run: () => Promise<{
@@ -102,7 +154,12 @@ interface OrderState {
   removeItem: (menuItemId: string) => void;
   clearCart: () => void;
   totalHarga: () => number;
-  pay: (metode: 'TUNAI' | 'DEBIT' | 'QRIS', jumlahDibayar: number) => Promise<{ success: boolean; kembalian?: number; error?: string }>;
+  pay: (
+    metode: 'TUNAI' | 'DEBIT' | 'QRIS',
+    jumlahDibayar: number,
+    order_type?: 'DINE_IN' | 'TAKE_AWAY',
+    tableId?: string | null
+  ) => Promise<{ success: boolean; order_id?: string; kembalian?: number; error?: string }>;
 }
 
 export const useOrderStore = create<OrderState>((set, get) => ({
@@ -160,17 +217,20 @@ export const useOrderStore = create<OrderState>((set, get) => ({
   totalHarga: () =>
     get().cart.reduce((sum, item) => sum + item.harga * item.qty, 0),
 
-  pay: async (metode, jumlahDibayar) => {
+  pay: async (metode, jumlahDibayar, order_type = 'TAKE_AWAY', tableId = null) => {
     const { cart, totalHarga } = get();
     if (cart.length === 0) return { success: false, error: 'Keranjang kosong' };
     if (jumlahDibayar < totalHarga()) {
       return { success: false, error: 'Jumlah bayar kurang' };
     }
 
+    const session = await window.api.auth.current();
+    const kasirId = session.success && session.user ? session.user.id : '00000000-0000-0000-0000-000000000001';
+
     const result = await window.api.order.create({
-      order_type: 'TAKE_AWAY',
-      table_id: null,
-      kasir_id: '00000000-0000-0000-0000-000000000001',
+      order_type,
+      table_id: tableId,
+      kasir_id: kasirId,
       items: cart,
       metode_pembayaran: metode,
       jumlah_dibayar: jumlahDibayar,

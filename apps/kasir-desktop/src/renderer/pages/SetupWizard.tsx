@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Alert, Btn } from '../components/ui';
 
 interface Props {
   onComplete: () => void;
@@ -6,6 +7,7 @@ interface Props {
 
 export function SetupWizard({ onComplete }: Props) {
   const [step, setStep] = useState(1);
+  const [modeLokal, setModeLokal] = useState(false);
   const [form, setForm] = useState({
     email: '',
     password: '',
@@ -42,6 +44,7 @@ export function SetupWizard({ onComplete }: Props) {
       await window.api.config.set('auth_token', data.token);
       await window.api.config.set('is_activated', 'true');
       await window.api.config.set('nama_toko', form.nama_outlet);
+      setModeLokal(false);
       setStep(3);
     } catch {
       setError('Gagal koneksi ke server');
@@ -50,47 +53,57 @@ export function SetupWizard({ onComplete }: Props) {
     }
   };
 
+  const handleModeLokal = async () => {
+    setError('');
+    await window.api.config.set('is_activated', 'true');
+    await window.api.config.set('mode_lokal', '1');
+    setModeLokal(true);
+    setStep(3);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8">
-        {/* Header */}
         <div className="text-center mb-6">
-          <div className="text-4xl mb-2">🍜</div>
+          <div className="w-16 h-16 mx-auto mb-3 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-3xl shadow-soft">
+            🍜
+          </div>
           <h1 className="text-2xl font-bold text-gray-800">POS Rumah Makan</h1>
           <p className="text-gray-500 text-sm mt-1">Pengaturan Awal</p>
         </div>
 
-        {/* Progress */}
         <div className="flex justify-center gap-2 mb-6">
           {[1, 2, 3].map((s) => (
             <div
               key={s}
-              className={`w-10 h-1 rounded-full transition ${
-                step >= s ? 'bg-blue-600' : 'bg-gray-200'
-              }`}
+              className={`w-10 h-1 rounded-full transition ${step >= s ? 'bg-blue-600' : 'bg-gray-200'}`}
             />
           ))}
         </div>
 
-        {/* Step 1: Profil Toko */}
         {step === 1 && (
           <div className="space-y-4">
             <h2 className="text-lg font-semibold text-center">Profil Toko</h2>
+            <span className="label">Nama Toko</span>
             <input
               name="nama_outlet"
-              placeholder="Nama Toko (contoh: Warung Bu Ani)"
+              placeholder="Contoh: Warung Bu Ani"
               value={form.nama_outlet}
               onChange={handleChange}
-              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              className="input"
             />
+            <span className="label">Nama Pemilik</span>
             <input
               name="nama_pemilik"
               placeholder="Nama Pemilik"
               value={form.nama_pemilik}
               onChange={handleChange}
-              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              className="input"
             />
-            <button
+            {error && <Alert tone="err">{error}</Alert>}
+            <Btn
+              variant="primary"
+              className="w-full py-3 text-lg"
               onClick={() => {
                 if (!form.nama_outlet || !form.nama_pemilik) {
                   setError('Isi nama toko dan pemilik');
@@ -99,68 +112,67 @@ export function SetupWizard({ onComplete }: Props) {
                 setError('');
                 setStep(2);
               }}
-              className="w-full py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700"
             >
               Selanjutnya
-            </button>
+            </Btn>
+            <div className="pt-2 text-center">
+              <span className="block text-xs text-gray-400 mb-2">
+                Tidak ingin buat akun sekarang?
+              </span>
+              <Btn variant="ghost" className="w-full" onClick={handleModeLokal}>
+                Lanjut Tanpa Akun (Mode Lokal)
+              </Btn>
+            </div>
           </div>
         )}
 
-        {/* Step 2: Registrasi Akun */}
         {step === 2 && (
           <div className="space-y-4">
             <h2 className="text-lg font-semibold text-center">Buat Akun</h2>
+            <span className="label">Email</span>
             <input
               name="email"
               type="email"
               placeholder="Email"
               value={form.email}
               onChange={handleChange}
-              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              className="input"
             />
+            <span className="label">Password</span>
             <input
               name="password"
               type="password"
-              placeholder="Password (min 6 karakter)"
+              placeholder="Minimal 6 karakter"
               value={form.password}
               onChange={handleChange}
-              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              className="input"
             />
-            {error && (
-              <p className="text-red-500 text-sm text-center">{error}</p>
-            )}
+            {error && <Alert tone="err">{error}</Alert>}
             <div className="flex gap-2">
-              <button
-                onClick={() => setStep(1)}
-                className="flex-1 py-3 bg-gray-200 font-semibold rounded-lg"
-              >
+              <Btn variant="secondary" className="flex-1 py-3" onClick={() => setStep(1)}>
                 Kembali
-              </button>
-              <button
-                onClick={handleRegister}
-                disabled={loading}
-                className="flex-1 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 disabled:bg-gray-300"
-              >
+              </Btn>
+              <Btn variant="primary" className="flex-1 py-3" onClick={handleRegister} disabled={loading}>
                 {loading ? 'Mendaftar...' : 'Daftar'}
-              </button>
+              </Btn>
             </div>
           </div>
         )}
 
-        {/* Step 3: Selesai */}
         {step === 3 && (
           <div className="text-center space-y-4">
-            <div className="text-5xl">✅</div>
+            <div className="w-16 h-16 mx-auto rounded-2xl bg-green-100 text-green-600 flex items-center justify-center text-3xl">
+              ✓
+            </div>
             <h2 className="text-lg font-semibold">Siap Digunakan!</h2>
-            <p className="text-gray-500 text-sm">
-              Akun dan toko Anda sudah terdaftar. Aplikasi siap untuk digunakan.
+            <p className="text-gray-500 text-sm leading-relaxed">
+              {modeLokal
+                ? 'Aplikasi siap dipakai secara offline. Sinkronisasi cloud bisa diaktifkan belakangan bila diperlukan.'
+                : 'Akun dan toko Anda sudah terdaftar. Aplikasi siap untuk digunakan.'}
             </p>
-            <button
-              onClick={onComplete}
-              className="w-full py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700"
-            >
+            <Btn variant="success" className="w-full py-3 text-lg" onClick={onComplete}>
               Mulai Kasir
-            </button>
+            </Btn>
           </div>
         )}
       </div>
