@@ -1,0 +1,31 @@
+{
+  "name": "backend-api",
+  "version": "1.0.0",
+  "description": "POS Rumah Makan - Backend Cloud API",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@fastify/cors": "^8.5.0",
+    "bcrypt": "^5.1.1",
+    "dotenv": "16.6.1",
+    "fastify": "4.29.1",
+    "jsonwebtoken": "^9.0.3",
+    "postgres": "3.4.9"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "16.18.68",
+    "tsx": "3.14.0",
+    "typescript": "^5.3.3"
+  }
+}

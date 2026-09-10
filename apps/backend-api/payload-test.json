@@ -1,0 +1,31 @@
+{
+  "orders": [
+    {
+      "id": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+      "order_type": "DINE_IN",
+      "table_id": "T-01",
+      "nomor_antrian": "001",
+      "status": "CLOSED",
+      "kasir_id": "bbbbbbbb-1111-4bbb-8bbb-111111111111",
+      "waktu_buka": "2026-09-10T00:00:00.000Z",
+      "waktu_tutup": "2026-09-10T00:10:00.000Z",
+      "items": [
+        {
+          "id": "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+          "menu_item_id": "aaaaaaa1-aaaa-4aaa-8aaa-aaaaaaaaaaa1",
+          "qty": 1,
+          "catatan": "",
+          "harga_saat_transaksi": 25000
+        }
+      ],
+      "payment": {
+        "id": "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
+        "metode": "TUNAI",
+        "jumlah_dibayar": 50000,
+        "kembalian": 25000,
+        "status": "PAID",
+        "waktu_bayar": "2026-09-10T00:10:00.000Z"
+      }
+    }
+  ]
+}
