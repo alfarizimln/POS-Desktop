@@ -125,6 +125,7 @@ declare global {
         setShare: (share: string) => Promise<{ success: boolean }>;
         test: () => Promise<{ success: boolean; error?: string; message?: string }>;
         printOrder: (orderId: string) => Promise<{ success: boolean; error?: string }>;
+        printDailyReport: (tanggal: string) => Promise<{ success: boolean; error?: string }>;
       };
     };
   }

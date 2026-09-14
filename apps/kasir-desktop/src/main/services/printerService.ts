@@ -1,6 +1,7 @@
 import { BrowserWindow } from 'electron';
 import db from '../database/db';
 import { ThermalPrinter, PrinterTypes, CharacterSet } from 'node-thermal-printer';
+import type { DailyReportData } from './reportService';
 
 export interface PrintableOrder {
   id: string;
@@ -169,4 +170,45 @@ export async function printOrderById(orderId: string): Promise<void> {
   await printOrder(order);
 }
 
-export default { getPrinterNames, testPrint, printOrderById, printOrder };
+function formatNominal(n: number): string {
+  return n.toLocaleString('id-ID');
+}
+
+export async function printDailyReport(report: DailyReportData): Promise<void> {
+  const p = printerFactory();
+  buildHeader(p, 'LAPORAN HARIAN', report.tanggal);
+
+  p.leftRight('Total Penjualan', formatNominal(report.summary.total_penjualan));
+  p.leftRight('Jumlah Transaksi', String(report.summary.jumlah_order));
+  p.newLine();
+
+  const metodeLabel = (m: string) => {
+    if (m === 'TUNAI') return 'Tunai';
+    if (m === 'DEBIT') return 'Debit';
+    if (m === 'QRIS') return 'QRIS';
+    return m;
+  };
+  const tipeLabel = (t: string) => (t === 'DINE_IN' ? 'Makan di Tempat' : 'Bawa Pulang');
+
+  p.println('PER METODE');
+  for (const r of report.byMetode) {
+    p.leftRight(`${metodeLabel(r.metode)} (${r.jumlah})`, formatNominal(r.nominal));
+  }
+  p.newLine();
+
+  p.println('PER JENIS');
+  for (const r of report.byType) {
+    p.leftRight(`${tipeLabel(r.tipe)} (${r.jumlah})`, formatNominal(r.nominal));
+  }
+  p.newLine();
+
+  p.println('PER KASIR');
+  for (const r of report.byKasir) {
+    p.leftRight(`${r.kasir} (${r.jumlah})`, formatNominal(r.nominal));
+  }
+
+  buildFooter(p);
+  await p.execute();
+}
+
+export default { getPrinterNames, testPrint, printOrderById, printOrder, printDailyReport };

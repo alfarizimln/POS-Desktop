@@ -39,6 +39,7 @@ export function DailyReport({ onClose }: { onClose: () => void }) {
   const [tanggal, setTanggal] = useState(todayLocal());
   const [data, setData] = useState<DailyReportData | null>(null);
   const [pesan, setPesan] = useState('');
+  const [mencetak, setMencetak] = useState(false);
 
   const load = useCallback(async () => {
     const result = await window.api.report.daily(tanggal);
@@ -51,6 +52,17 @@ export function DailyReport({ onClose }: { onClose: () => void }) {
   }, [tanggal]);
 
   useEffect(() => { load(); }, [load]);
+
+  const handleCetak = async () => {
+    setMencetak(true);
+    setPesan('');
+    try {
+      const result = await window.api.printer.printDailyReport(tanggal);
+      setPesan(result.success ? 'Laporan dikirim ke printer' : result.error || 'Cetak gagal');
+    } finally {
+      setMencetak(false);
+    }
+  };
 
   const metodeLabel = (m: string) => {
     if (m === 'TUNAI') return 'Tunai';
@@ -71,7 +83,10 @@ export function DailyReport({ onClose }: { onClose: () => void }) {
           className="input !w-auto"
         />
         <Btn variant="primary" className="px-4 py-2" onClick={load}>Muat</Btn>
-        {pesan && <span className="text-red-500 text-sm">{pesan}</span>}
+        <Btn variant="secondary" className="px-4 py-2" onClick={handleCetak} disabled={mencetak}>
+          {mencetak ? 'Mencetak...' : 'Cetak'}
+        </Btn>
+        {pesan && <span className={`text-sm ${pesan.startsWith('Laporan') ? 'text-green-600' : 'text-red-500'}`}>{pesan}</span>}
       </div>
 
       {data && (

@@ -58,6 +58,8 @@ node -v   # harus v16.17.0
 - [x] Tahap 10: Login kasir (PIN)
 - [x] Tahap 11: Jenis order (Makan di Tempat / Bawa Pulang) + pilih meja
 - [x] Tahap 12: Riwayat transaksi + detail + cetak ulang
-- [x] Tahap 13: Packaging installer (electron-builder NSIS)
+- [x] Tahap 13: Packaging installer (electron-builder NSIS, x64 + ia32)
+- [x] Tahap 14–16: Fitur lanjutan — pengaturan sinkronisasi & mode lokal, kelola kasir multi-user, profil usaha, dan perbaikan performa antrean.
+- [x] Tahap 17: Ikon resmi (`.ico` multi-res) + cetak laporan harian ke thermal printer; packaging x64 + ia32 dengan ikon ter-embed.
 
 Note: Tahap 0 (validasi hardware printer) tertunda sampai uji di PC Windows 7 dengan printer AnyPOS.

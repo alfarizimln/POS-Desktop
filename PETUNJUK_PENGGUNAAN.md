@@ -99,6 +99,7 @@ Wizard 3 langkah muncul sekali:
   - Rincian per **metode bayar** (Tunai/Debit/QRIS),
   - Rincian per **jenis order** (Makan di Tempat/Bawa Pulang),
   - Rincian per **kasir**.
+- Klik **Cetak** untuk mencetak laporan ke printer thermal (format struk standar).
 
 ---
 

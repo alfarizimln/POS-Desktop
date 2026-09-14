@@ -1,6 +1,7 @@
 import { ipcMain } from 'electron';
 import db from '../database/db';
-import { getPrinterNames, testPrint, printOrderById } from '../services/printerService';
+import { getPrinterNames, testPrint, printOrderById, printDailyReport } from '../services/printerService';
+import { getDailyReport } from '../services/reportService';
 
 export function registerPrinterHandlers() {
   ipcMain.handle('printer:list', async () => {
@@ -36,6 +37,18 @@ export function registerPrinterHandlers() {
   ipcMain.handle('printer:printOrder', async (_event, orderId: string) => {
     try {
       await printOrderById(String(orderId));
+      return { success: true };
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      return { success: false, error: message };
+    }
+  });
+
+  ipcMain.handle('printer:printDailyReport', async (_event, tanggal: string) => {
+    try {
+      const report = getDailyReport(String(tanggal));
+      if (!report.success) return { success: false, error: report.error || 'Tanggal tidak valid' };
+      await printDailyReport(report as Parameters<typeof printDailyReport>[0]);
       return { success: true };
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);

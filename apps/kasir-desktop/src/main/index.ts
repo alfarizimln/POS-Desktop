@@ -1,5 +1,6 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'path';
+import './appName';
 import { seed, seedTables } from './database/seed';
 import { registerMenuHandlers } from './handlers/menuHandlers';
 import { registerTableHandlers } from './handlers/tableHandlers';

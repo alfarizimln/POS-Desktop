@@ -56,5 +56,6 @@ contextBridge.exposeInMainWorld('api', {
     setShare: (share: string) => ipcRenderer.invoke('printer:setShare', share),
     test: () => ipcRenderer.invoke('printer:test'),
     printOrder: (orderId: string) => ipcRenderer.invoke('printer:printOrder', orderId),
+    printDailyReport: (tanggal: string) => ipcRenderer.invoke('printer:printDailyReport', tanggal),
   },
 });
