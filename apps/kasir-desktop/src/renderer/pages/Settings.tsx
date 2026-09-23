@@ -49,8 +49,8 @@ export function Settings({ onClose }: { onClose: () => void }) {
       </div>
 
       <div className="flex gap-2 mt-5">
-        <Btn variant="secondary" className="flex-1 py-2.5" onClick={onClose}>Batal</Btn>
-        <Btn variant="primary" className="flex-1 py-2.5" onClick={simpan}>Simpan</Btn>
+        <Btn variant="secondary" className="flex-1" onClick={onClose}>Batal</Btn>
+        <Btn variant="primary" className="flex-1" onClick={simpan}>Simpan</Btn>
       </div>
     </Modal>
   );

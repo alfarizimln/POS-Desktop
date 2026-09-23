@@ -6,6 +6,8 @@ export interface DailyReportData {
   byMetode: Array<{ metode: string; jumlah: number; nominal: number }>;
   byType: Array<{ tipe: string; jumlah: number; nominal: number }>;
   byKasir: Array<{ kasir: string; jumlah: number; nominal: number }>;
+  saldo_awal: number;
+  total_tunai: number;
 }
 
 export function getDailyReport(tanggal: string): { success: boolean; error?: string } & Partial<DailyReportData> {
@@ -50,6 +52,12 @@ export function getDailyReport(tanggal: string): { success: boolean; error?: str
     GROUP BY u.id
   `).all(start, end) as Array<{ kasir: string; jumlah: number; nominal: number }>;
 
+  const saldoAwalRow = db.prepare('SELECT value FROM app_config WHERE key = ?').get(`kas_awal:${date}`) as
+    | { value: string }
+    | undefined;
+  const saldo_awal = Number(saldoAwalRow?.value) || 0;
+  const total_tunai = byMetode.filter((m) => m.metode === 'TUNAI').reduce((sum, m) => sum + m.nominal, 0);
+
   return {
     success: true,
     tanggal: date,
@@ -57,6 +65,8 @@ export function getDailyReport(tanggal: string): { success: boolean; error?: str
     byMetode,
     byType,
     byKasir,
+    saldo_awal,
+    total_tunai,
   };
 }
 

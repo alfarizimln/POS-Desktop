@@ -1,7 +1,14 @@
-# Generate build/icon.ico — logo E-Restoran (multi-size, kompatibel Windows 7).
-# Entry kecil (16/24/32/48) memakai BMP-BGRA, entry 256 memakai PNG.
-# Jalankan dari folder apps/kasir-desktop:
-#   powershell -ExecutionPolicy Bypass -File scripts\generate-icon.ps1
+# Convert PNG -> build/icon.ico (multi-size, compatible Windows 7).
+# Small entries (16/24/32/48) use BMP-BGRA, entry 256 uses PNG.
+# Run from folder apps/kasir-desktop:
+#   powershell -ExecutionPolicy Bypass -File scripts\convert-icon.ps1 <file-png>
+# Example:
+#   powershell -ExecutionPolicy Bypass -File scripts\convert-icon.ps1 food.png
+
+param(
+  [Parameter(Mandatory = $true, Position = 0)]
+  [string]$InputPng
+)
 
 Add-Type -AssemblyName System.Drawing
 
@@ -10,58 +17,44 @@ $buildDir = Join-Path $root "build"
 New-Item -ItemType Directory -Force -Path $buildDir | Out-Null
 $out = Join-Path $buildDir "icon.ico"
 
-function New-RoundedRectPath($x, $y, $w, $h, $r) {
-  $p = New-Object System.Drawing.Drawing2D.GraphicsPath
-  $d = $r * 2
-  $p.AddArc($x, $y, $d, $d, 180, 90)
-  $p.AddArc(($x + $w - $d), $y, $d, $d, 270, 90)
-  $p.AddArc(($x + $w - $d), ($y + $h - $d), $d, $d, 0, 90)
-  $p.AddArc($x, ($y + $h - $d), $d, $d, 90, 90)
-  $p.CloseFigure()
-  return $p
+if (-not [System.IO.Path]::IsPathRooted($InputPng)) {
+  $InputPng = Join-Path (Get-Location) $InputPng
+}
+if (-not (Test-Path -LiteralPath $InputPng)) {
+  throw "PNG not found: $InputPng"
 }
 
-# --- Master 256x256 ---
-$bmp = New-Object System.Drawing.Bitmap(256, 256)
+$src = [System.Drawing.Image]::FromFile($InputPng)
+if ($src.Width -lt 16 -or $src.Height -lt 16) {
+  $src.Dispose()
+  throw "PNG terlalu kecil - minimal 16x16 piksel."
+}
+Write-Output ("Input: {0} ({1}x{2})" -f $InputPng, $src.Width, $src.Height)
+
+# --- Master 256x256 (fit + center, transparent if aspect ratio is not 1:1) ---
+$bmp = New-Object System.Drawing.Bitmap(256, 256, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
 $g = [System.Drawing.Graphics]::FromImage($bmp)
-$g.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::AntiAlias
+$g.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
+$g.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::HighQuality
+$g.PixelOffsetMode = [System.Drawing.Drawing2D.PixelOffsetMode]::HighQuality
 $g.Clear([System.Drawing.Color]::Transparent)
-
-# Background: kotak teal membulat
-$bg = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(15, 118, 110))
-$path = New-RoundedRectPath 8 8 240 240 48
-$g.FillPath($bg, $path)
-$bg.Dispose(); $path.Dispose()
-
-# Mangkuk putih (garis, minimal) — proporsi sama dengan LogoMark SVG di UI
-$L = 256
-$s = $L * 0.024
-$m = New-Object System.Drawing.Drawing2D.Matrix
-$m.Translate($L / 2, $L / 2)
-$m.Scale($s, $s)
-$m.Translate(-12, -15.5)
-$g.Transform = $m
-$bowl = New-Object System.Drawing.Drawing2D.GraphicsPath
-$bowl.AddArc(3, 2, 18, 18, 180, 180)
-$bowl.CloseFigure()
-$pen = New-Object System.Drawing.Pen([System.Drawing.Color]::White, 2)
-$pen.StartCap = [System.Drawing.Drawing2D.LineCap]::Round
-$pen.EndCap = [System.Drawing.Drawing2D.LineCap]::Round
-$pen.LineJoin = [System.Drawing.Drawing2D.LineJoin]::Round
-$g.DrawPath($pen, $bowl)
-$pen.Dispose(); $bowl.Dispose()
-$g.ResetTransform()
-$m.Dispose()
+$scale = [Math]::Min(256 / $src.Width, 256 / $src.Height)
+$dw = [Math]::Floor($src.Width * $scale)
+$dh = [Math]::Floor($src.Height * $scale)
+$dx = [Math]::Floor((256 - $dw) / 2)
+$dy = [Math]::Floor((256 - $dh) / 2)
+$g.DrawImage($src, $dx, $dy, $dw, $dh)
+$src.Dispose()
 $g.Dispose()
 
-function New-Scaled($src, $size) {
+function New-Scaled($srcBitmap, $size) {
   $dst = New-Object System.Drawing.Bitmap($size, $size, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
   $gg = [System.Drawing.Graphics]::FromImage($dst)
   $gg.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
   $gg.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::HighQuality
   $gg.PixelOffsetMode = [System.Drawing.Drawing2D.PixelOffsetMode]::HighQuality
   $gg.Clear([System.Drawing.Color]::Transparent)
-  $gg.DrawImage($src, 0, 0, $size, $size)
+  $gg.DrawImage($srcBitmap, 0, 0, $size, $size)
   $gg.Dispose()
   return $dst
 }
@@ -119,7 +112,7 @@ foreach ($im in $images) {
 foreach ($im in $images) { $bw.Write($im.Data) }
 $bw.Flush(); $bw.Close(); $fs.Close()
 
-# --- Verifikasi baca-balik (struktur ICONDIR + magic tiap entry) ---
+# --- Read-back verification (ICONDIR structure + per-entry magic) ---
 $rf = [System.IO.File]::OpenRead($out)
 $rb = New-Object System.IO.BinaryReader($rf)
 $reserved = $rb.ReadUInt16(); $imgType = $rb.ReadUInt16(); $count = $rb.ReadUInt16()
@@ -144,3 +137,8 @@ foreach ($e in $entries) {
   Write-Output ("  entry size={0} planes={1} bpp={2} len={3} off={4}" -f $e.W, $e.Planes, $e.Bpp, $e.Len, $e.Off)
 }
 Write-Output ("  magics: " + ($magics -join " "))
+
+# --- Verify Windows Icon loader can load it ---
+$icon = New-Object System.Drawing.Icon($out)
+Write-Output ("  Icon loader OK: {0}x{1}" -f $icon.Width, $icon.Height)
+$icon.Dispose()

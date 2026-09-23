@@ -1,7 +1,7 @@
 {
   "name": "backend-api",
   "version": "1.0.0",
-  "description": "POS Rumah Makan - Backend Cloud API",
+  "description": "E-Restoran - Backend Cloud API",
   "type": "module",
   "main": "dist/index.js",
   "scripts": {

@@ -1,5 +1,5 @@
 -- ============================================
--- POS Rumah Makan — Cloud Schema (Supabase)
+-- E-Restoran — Cloud Schema (Supabase)
 -- Multi-Tenant dengan Row Level Security
 -- ============================================
 

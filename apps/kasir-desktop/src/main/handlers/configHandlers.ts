@@ -17,7 +17,7 @@ export function registerConfigHandlers() {
     const rows = db.prepare('SELECT key, value FROM app_config WHERE key IN (?, ?, ?)').all(...keys) as Array<{
       key: string; value: string;
     }>;
-    const info: Record<string, string> = { nama_usaha: 'POS Rumah Makan', alamat_usaha: '', telp_usaha: '' };
+    const info: Record<string, string> = { nama_usaha: 'E-Restoran', alamat_usaha: '', telp_usaha: '' };
     for (const r of rows) info[r.key] = r.value;
     return { success: true, info };
   });

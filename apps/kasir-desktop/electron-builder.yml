@@ -1,5 +1,5 @@
 appId: com.pos.rumahmakan
-productName: POS Rumah Makan
+productName: E-Restoran
 copyright: Copyright © 2026
 
 directories:
@@ -16,15 +16,15 @@ win:
   icon: build/icon.ico
   target:
     - nsis
-  executableName: POSRumahMakan
+  executableName: ERestoran
 
 nsis:
   oneClick: false
   allowToChangeInstallationDirectory: true
   createDesktopShortcut: true
   createStartMenuShortcut: true
-  shortcutName: POS Rumah Makan
-  artifactName: POS Rumah Makan Setup ${version} (${arch}).${ext}
+  shortcutName: E-Restoran
+  artifactName: E-Restoran Setup ${version} (${arch}).${ext}
 
 electronDownload:
   mirror: https://npmmirror.com/mirrors/electron/

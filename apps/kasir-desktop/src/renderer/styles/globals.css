@@ -9,8 +9,12 @@ body,
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+body {
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   color: #1f2937;
+  background: #f3f4f6;
 }
 
 button {
@@ -31,7 +35,7 @@ button:disabled {
 }
 *::-webkit-scrollbar-thumb {
   background: #d1d5db;
-  border-radius: 9999px;
+  border-radius: 4px;
 }
 *::-webkit-scrollbar-thumb:hover {
   background: #9ca3af;
@@ -39,40 +43,48 @@ button:disabled {
 
 @layer components {
   .card {
-    @apply bg-white rounded-xl shadow-sm border border-gray-100;
+    @apply bg-white rounded-lg border border-gray-200;
   }
   .modal-card {
-    @apply bg-white rounded-2xl shadow-xl flex flex-col border border-gray-100;
+    @apply bg-white rounded-xl border border-gray-200 shadow-lg flex flex-col;
   }
+
   .btn {
-    @apply inline-flex items-center justify-center gap-1 font-semibold rounded-lg transition active:scale-95 disabled:opacity-50 disabled:pointer-events-none;
+    @apply inline-flex items-center justify-center gap-1.5 h-9 px-3.5 text-sm font-medium rounded-md border border-transparent transition-colors select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-soft disabled:opacity-45 disabled:pointer-events-none;
   }
   .btn-primary {
-    @apply bg-blue-600 text-white hover:bg-blue-700;
+    @apply bg-accent text-white hover:bg-accent-hover;
   }
   .btn-secondary {
-    @apply bg-gray-100 text-gray-700 hover:bg-gray-200;
+    @apply bg-white text-gray-700 border-gray-300 hover:bg-gray-50 hover:border-gray-400;
   }
   .btn-danger {
-    @apply bg-red-50 text-red-600 hover:bg-red-100;
+    @apply bg-white text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300;
   }
   .btn-success {
-    @apply bg-green-600 text-white hover:bg-green-700;
+    @apply bg-accent text-white hover:bg-accent-hover;
   }
   .btn-ghost {
-    @apply bg-transparent text-gray-500 hover:bg-gray-100;
+    @apply bg-transparent text-gray-500 hover:bg-gray-100 hover:text-gray-700;
   }
+  .btn-sm {
+    @apply h-8 px-3 text-xs;
+  }
+  .btn-lg {
+    @apply h-11 px-5 text-base;
+  }
+
   .input {
-    @apply w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400;
+    @apply w-full h-9 px-3 text-sm bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-accent-soft focus:border-accent;
   }
   .label {
-    @apply block text-xs font-semibold text-gray-500 mb-1;
+    @apply block text-xs font-semibold text-gray-600 mb-1.5;
   }
   .badge {
-    @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap;
+    @apply inline-flex items-center gap-1 h-5 px-2 text-[11px] font-medium whitespace-nowrap rounded; 
   }
   .th {
-    @apply px-3 py-2 text-left text-xs font-semibold text-gray-500 whitespace-nowrap;
+    @apply px-3 py-2 text-left text-[11px] font-semibold text-gray-500 whitespace-nowrap uppercase tracking-wide;
   }
   .td {
     @apply px-3 py-2 text-sm whitespace-nowrap;

@@ -1,4 +1,4 @@
-# PETUNJUK PENGGUNAAN — POS Rumah Makan
+# PETUNJUK PENGGUNAAN — E-Restoran
 
 Aplikasi kasir desktop untuk rumah makan / warung. Berjalan **offline-first**: semua data (menu, transaksi, pengguna) tersimpan di database lokal perangkat. Sinkronisasi ke cloud bersifat opsional dan hanya aktif bila Anda mendaftar akun.
 
@@ -8,11 +8,13 @@ Aplikasi kasir desktop untuk rumah makan / warung. Berjalan **offline-first**: s
 
 | Hal | Detail |
 |---|---|
-| Installer (64-bit) | `apps/kasir-desktop/release/POS Rumah Makan Setup 1.0.0 (x64).exe` |
-| Installer (32-bit, untuk Win7 32-bit) | `apps/kasir-desktop/release/POS Rumah Makan Setup 1.0.0 (ia32).exe` |
+| Installer (64-bit) | `apps/kasir-desktop/release/E-Restoran Setup 1.0.0 (x64).exe` |
+| Installer (32-bit, untuk Win7 32-bit) | `apps/kasir-desktop/release/E-Restoran Setup 1.0.0 (ia32).exe` |
 | Database lokal | `%APPDATA%\POS Rumah Makan\pos-database.sqlite` |
 | Database (saat mode dev) | `%APPDATA%\Electron\pos-database.sqlite` |
 | Printer | Printer thermal 80mm yang **di-share** oleh Windows (bukan USB langsung) |
+
+> Catatan: nama folder data tetap `POS Rumah Makan` (dipertahankan agar data lama langsung terbaca) walaupun nama aplikasinya kini **E-Restoran**. Jangan hapus/rename folder tersebut.
 
 > **Backup**: tutup aplikasi, lalu salin file `pos-database.sqlite` ke lokasi lain. Itu satu-satunya data Anda.
 
@@ -30,9 +32,9 @@ Aplikasi kasir desktop untuk rumah makan / warung. Berjalan **offline-first**: s
 - Tidak butuh admin — installer bersifat per-user.
 
 ### Langkah
-1. Salin file installer yang sesuai arsitektur (misal `POS Rumah Makan Setup 1.0.0 (ia32).exe`) dari folder `release/` ke PC (via USB).
+1. Salin file installer yang sesuai arsitektur (misal `E-Restoran Setup 1.0.0 (ia32).exe`) dari folder `release/` ke PC (via USB).
 2. Jalankan installer → ikuti wizard → Selesai.
-3. Buka aplikasi **POS Rumah Makan** dari Start Menu / desktop.
+3. Buka aplikasi **E-Restoran** dari Start Menu / desktop.
 
 ---
 
@@ -95,11 +97,14 @@ Wizard 3 langkah muncul sekali:
 ## 8. Laporan Harian (tombol **Laporan**)
 
 - Pilih tanggal → tampil:
-  - Total penjualan & jumlah transaksi,
+  - **Saldo Awal**, **Total Penjualan**, dan **Saldo Akhir (Tunai)** (Saldo Awal + penjualan tunai; Debit/QRIS tidak dihitung sebagai uang kas),
   - Rincian per **metode bayar** (Tunai/Debit/QRIS),
   - Rincian per **jenis order** (Makan di Tempat/Bawa Pulang),
   - Rincian per **kasir**.
-- Klik **Cetak** untuk mencetak laporan ke printer thermal (format struk standar).
+- **Saldo awal kas**: isi angka di kolom *Saldo awal (Rp)* lalu klik **Simpan Saldo** (per tanggal — saldo tanggal 1 Juni tersimpan terpisah dari tanggal 2 Juni, dst.).
+- Klik **Cetak** untuk mencetak laporan ke printer thermal (format struk standar, termasuk Saldo Awal & Saldo Akhir).
+- Klik **Ekspor Excel** untuk menyimpan ke file Excel (`.xlsx`): dialog pilih lokasi/nama file muncul otomatis. Isinya dua sheet — **Ringkasan** (saldo, total, per metode/jenis/kasir) dan **Detail Transaksi** (1 baris per item: waktu, kasir, item, qty, harga, metode) yang bisa difilter/sortir.
+- Data mentah transaksi tersimpan lokal di `%APPDATA%\POS Rumah Makan\pos-database.sqlite` — bisa dibuka/backup tanpa aplikasi (backup: tutup aplikasi dulu lalu salin file-nya).
 
 ---
 
@@ -117,6 +122,7 @@ Wizard 3 langkah muncul sekali:
 
 - Ubah **Nama Usaha**, **Alamat**, dan **Telepon**.
 - Nama usaha & alamat tampil di header halaman kasir (judul aplikasi).
+- **Nama, alamat & telepon yang sama juga dipakai sebagai kepala surat struk dan laporan cetak** — setelah disimpan, struk berikutnya otomatis memakai data terbaru.
 
 ---
 
@@ -133,6 +139,8 @@ Setup sekali:
 - Nama share sesuai (tulis di *Printer → nama share*).
 - Printer dalam keadaan online & tidak menunggu (paper out, off).
 - Jalankan **Test Print** untuk memastikan jalur kirimnya OK.
+
+**Printer Bluetooth**: bisa asalkan printer sudah dipasangkan (pairing) dan **ter-install sebagai printer di Windows** (*Devices and Printers*). Setelah muncul di daftar printer Windows, langkah di atas (share → nama share) berlaku sama — aplikasi tidak perlu diubah.
 
 ---
 

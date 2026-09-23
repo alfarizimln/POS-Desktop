@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Modal, Btn, Badge, EmptyState } from '../components/ui';
+import { Modal, Btn, Badge, EmptyState, Alert } from '../components/ui';
 
 function formatRupiah(n: number | null) {
   if (n === null) return '-';
@@ -74,11 +74,9 @@ export function TransactionHistory({ onClose }: { onClose: () => void }) {
   return (
     <>
       <Modal title="Riwayat Transaksi" onClose={onClose} size="xl">
-        {pesan && (
-          <div className="px-4 py-2 mb-3 text-sm text-center bg-blue-50 text-blue-700 rounded-lg">{pesan}</div>
-        )}
+        {pesan && <Alert tone="info" className="mb-3">{pesan}</Alert>}
 
-        <div className="border border-gray-100 rounded-xl overflow-hidden">
+        <div className="border border-gray-200 rounded-lg overflow-hidden">
           <div className="overflow-y-auto max-h-[60vh]">
             <table className="w-full text-sm">
               <thead className="bg-gray-50 sticky top-0">
@@ -104,18 +102,18 @@ export function TransactionHistory({ onClose }: { onClose: () => void }) {
                     <td className="td">{r.nomor_meja || '-'}</td>
                     <td className="td">{r.metode || '-'}</td>
                     <td className="td">{r.kasir_nama || '-'}</td>
-                    <td className="td text-right font-semibold">{formatRupiah(r.total)}</td>
+                    <td className="td text-right font-semibold tabular-nums">{formatRupiah(r.total)}</td>
                     <td className="td">
                       <Badge tone={r.sync_status === 'SYNCED' ? 'green' : 'amber'}>
                         {r.sync_status === 'SYNCED' ? 'Tersinkron' : 'Antre'}
                       </Badge>
                     </td>
                     <td className="td text-right">
-                      <div className="flex gap-1 justify-end">
-                        <Btn variant="secondary" className="px-2.5 py-1 text-xs" onClick={() => openDetail(r.id)}>
+                      <div className="flex gap-1.5 justify-end">
+                        <Btn variant="secondary" size="sm" onClick={() => openDetail(r.id)}>
                           Detail
                         </Btn>
-                        <Btn variant="primary" className="px-2.5 py-1 text-xs" onClick={() => reprint(r.id)}>
+                        <Btn variant="primary" size="sm" onClick={() => reprint(r.id)}>
                           Cetak
                         </Btn>
                       </div>
@@ -132,17 +130,17 @@ export function TransactionHistory({ onClose }: { onClose: () => void }) {
         <Modal title="Detail Transaksi" onClose={() => setShowDetail(false)} size="sm">
           <div className="text-sm text-gray-600 mb-3">
             <div className="flex items-center gap-2">
-              <Badge tone="blue">{jenisLabel(detail.order_type)}</Badge>
+              <Badge tone="teal">{jenisLabel(detail.order_type)}</Badge>
               <span>{formatWaktu(detail.waktu_buka)}</span>
             </div>
             <div className="mt-1 text-xs text-gray-500">Meja: {detail.nomor_meja || '-'} · Metode: {detail.metode || '-'}</div>
           </div>
 
-          <div className="border-y border-gray-100 py-2 space-y-1.5">
+          <div className="border-y border-gray-200 py-2 space-y-1.5">
             {detail.items.map((item, i) => (
               <div key={i} className="flex justify-between text-sm">
                 <span className="text-gray-700">{item.nama} <span className="text-gray-400">×{item.qty}</span></span>
-                <span className="font-semibold">{formatRupiah(item.harga * item.qty)}</span>
+                <span className="font-semibold tabular-nums">{formatRupiah(item.harga * item.qty)}</span>
               </div>
             ))}
           </div>
@@ -150,15 +148,15 @@ export function TransactionHistory({ onClose }: { onClose: () => void }) {
           <div className="mt-3 space-y-1 text-sm">
             <div className="flex justify-between">
               <span className="text-gray-500">Dibayar</span>
-              <span className="font-semibold">{formatRupiah(detail.jumlah_bayar)}</span>
+              <span className="font-semibold tabular-nums">{formatRupiah(detail.jumlah_bayar)}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-500">Kembalian</span>
-              <span className="font-semibold text-green-600">{formatRupiah(detail.kembalian)}</span>
+              <span className="font-semibold text-green-700 tabular-nums">{formatRupiah(detail.kembalian)}</span>
             </div>
           </div>
 
-          <Btn variant="secondary" className="w-full py-2.5 mt-4" onClick={() => setShowDetail(false)}>
+          <Btn variant="secondary" className="w-full mt-4" onClick={() => setShowDetail(false)}>
             Tutup
           </Btn>
         </Modal>

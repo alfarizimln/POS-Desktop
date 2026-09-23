@@ -127,7 +127,7 @@ export function MenuManagement({ onClose }: { onClose: () => void }) {
       <div className="flex gap-5 min-h-[420px]">
         {/* Kolom kiri: Kategori */}
         <div className="w-56 flex flex-col shrink-0">
-          <div className="font-bold text-sm text-gray-700 mb-2">Kategori</div>
+          <div className="font-semibold text-sm text-gray-700 mb-2">Kategori</div>
           <div className="flex gap-2 mb-3">
             <input
               type="text"
@@ -139,18 +139,20 @@ export function MenuManagement({ onClose }: { onClose: () => void }) {
             />
             <button
               onClick={handleAddCategory}
-              className="btn btn-primary px-3 shrink-0"
+              className="btn btn-primary shrink-0 !px-2.5"
               title="Tambah kategori"
             >
-              +
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <path d="M12 5v14M5 12h14" />
+              </svg>
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto space-y-1">
+          <div className="flex-1 overflow-y-auto space-y-1.5">
             {categories.length === 0 && <EmptyState text="Belum ada kategori" />}
             {categories.map((cat) => (
-              <div key={cat.id} className="card flex items-center gap-2 px-3 py-2">
+              <div key={cat.id} className="card flex items-center gap-2 px-3 py-2 hover:bg-gray-50 transition-colors">
                 <span
-                  className="flex-1 cursor-pointer text-sm"
+                  className="flex-1 cursor-pointer text-sm text-gray-800"
                   onClick={() => setKategoriId(cat.id)}
                   title="Klik untuk pilih dalam form"
                 >
@@ -158,7 +160,7 @@ export function MenuManagement({ onClose }: { onClose: () => void }) {
                 </span>
                 <button
                   onClick={() => handleDeleteCategory(cat.id)}
-                  className="text-red-400 hover:text-red-600 text-sm"
+                  className="text-gray-300 hover:text-red-500 text-sm transition-colors"
                   title="Hapus kategori"
                 >
                   ✕
@@ -171,8 +173,8 @@ export function MenuManagement({ onClose }: { onClose: () => void }) {
         {/* Kolom kanan: Item menu */}
         <div className="flex-1 flex flex-col min-w-0">
           <div className="flex justify-between items-center mb-2">
-            <div className="font-bold text-sm text-gray-700">Item Menu</div>
-            <Btn variant="success" className="px-3 py-1.5 text-sm" onClick={openCreate}>
+            <div className="font-semibold text-sm text-gray-700">Item Menu</div>
+            <Btn variant="primary" size="sm" onClick={openCreate}>
               + Tambah Item
             </Btn>
           </div>
@@ -182,16 +184,16 @@ export function MenuManagement({ onClose }: { onClose: () => void }) {
             {items.map((item) => (
               <div key={item.id} className="card flex items-center gap-3 px-4 py-3">
                 <div className="flex-1 min-w-0">
-                  <div className="font-semibold text-sm truncate">{item.nama}</div>
-                  <div className="text-xs text-gray-500 mt-0.5">
-                    <Badge tone="blue">{catName(item.kategori_id)}</Badge>
-                    <span className="ml-2">{formatRupiah(item.harga)}</span>
+                  <div className="font-medium text-sm text-gray-900 truncate">{item.nama}</div>
+                  <div className="text-xs text-gray-500 mt-0.5 flex items-center gap-2">
+                    <Badge tone="gray">{catName(item.kategori_id)}</Badge>
+                    <span className="tabular-nums">{formatRupiah(item.harga)}</span>
                   </div>
                 </div>
-                <Btn variant="secondary" className="px-3 py-1.5 text-xs" onClick={() => openEdit(item)}>
+                <Btn variant="secondary" size="sm" onClick={() => openEdit(item)}>
                   Ubah
                 </Btn>
-                <Btn variant="danger" className="px-3 py-1.5 text-xs" onClick={() => handleDeleteItem(item.id)}>
+                <Btn variant="danger" size="sm" onClick={() => handleDeleteItem(item.id)}>
                   Hapus
                 </Btn>
               </div>
@@ -203,7 +205,7 @@ export function MenuManagement({ onClose }: { onClose: () => void }) {
       {/* Form tambah/ubah item */}
       {showForm && (
         <div className="border-t border-gray-200 mt-4 pt-4 space-y-3">
-          <div className="font-bold text-sm text-gray-700">{editingId ? 'Ubah Item' : 'Tambah Item'}</div>
+          <div className="font-semibold text-sm text-gray-700">{editingId ? 'Ubah Item' : 'Tambah Item'}</div>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Nama">
               <input type="text" value={nama} onChange={(e) => setNama(e.target.value)} className="input" />
@@ -224,8 +226,8 @@ export function MenuManagement({ onClose }: { onClose: () => void }) {
             </Field>
           </div>
           <div className="flex gap-2 justify-end">
-            <Btn variant="secondary" className="px-4 py-2" onClick={resetForm}>Batal</Btn>
-            <Btn variant="primary" className="px-4 py-2" onClick={handleSave}>Simpan</Btn>
+            <Btn variant="secondary" onClick={resetForm}>Batal</Btn>
+            <Btn variant="primary" onClick={handleSave}>Simpan</Btn>
           </div>
         </div>
       )}

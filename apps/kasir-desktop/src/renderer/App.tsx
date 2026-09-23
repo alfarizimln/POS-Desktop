@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { KasirPage } from './pages/KasirPage';
 import { SetupWizard } from './pages/SetupWizard';
 import { LoginPage } from './pages/LoginPage';
+import { LogoMark } from './components/ui';
 
 export default function App() {
   const [activated, setActivated] = useState<boolean | null>(null);
@@ -30,11 +31,9 @@ export default function App() {
 
   if (activated === null) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 gap-3">
-        <div className="w-14 h-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-3xl animate-pulse">
-          🍜
-        </div>
-        <div className="text-gray-400 text-sm">Memuat...</div>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 gap-3">
+        <LogoMark size={44} />
+        <div className="text-sm text-gray-400">Memuat…</div>
       </div>
     );
   }

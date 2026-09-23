@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Alert, Btn } from '../components/ui';
+import { Alert, Btn, LogoMark } from '../components/ui';
 
 interface Props {
   onLogin: () => void;
@@ -57,14 +57,12 @@ export function LoginPage({ onLogin }: Props) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-8">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-xl shadow-md border border-gray-200 w-full max-w-sm p-7">
         <div className="text-center mb-6">
-          <div className="w-16 h-16 mx-auto mb-3 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-3xl shadow-soft">
-            🍜
-          </div>
-          <h1 className="text-2xl font-bold text-gray-800">POS Rumah Makan</h1>
-          <p className="text-gray-500 text-sm mt-1">Masuk sebagai Kasir</p>
+          <LogoMark size={52} rounded="rounded-xl" />
+          <h1 className="text-lg font-semibold text-gray-900 mt-3">E-Restoran</h1>
+          <p className="text-gray-500 text-sm mt-0.5">Masuk sebagai kasir</p>
         </div>
 
         <div className="mb-4">
@@ -88,7 +86,7 @@ export function LoginPage({ onLogin }: Props) {
           value={pin}
           onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 6))}
           onKeyDown={(e) => { if (e.key === 'Enter') handleLogin(); }}
-          className="input !py-3 text-center text-2xl tracking-widest font-semibold"
+          className="input !h-12 !text-center !text-2xl !font-semibold !tracking-widest"
           autoFocus
         />
 
@@ -103,7 +101,7 @@ export function LoginPage({ onLogin }: Props) {
                 else if (k === '⌫') setPin((prev) => prev.slice(0, -1));
                 else pressKey(k);
               }}
-              className="btn btn-secondary py-4 text-lg"
+              className="btn btn-secondary !h-11 !text-lg"
             >
               {k}
             </button>
@@ -112,11 +110,12 @@ export function LoginPage({ onLogin }: Props) {
 
         <Btn
           variant="primary"
-          className="w-full py-3 mt-4 text-lg"
+          size="lg"
+          className="w-full mt-4"
           onClick={handleLogin}
           disabled={loading || pin.length === 0}
         >
-          {loading ? 'Mengecek...' : 'Masuk'}
+          {loading ? 'Mengecek…' : 'Masuk'}
         </Btn>
       </div>
     </div>

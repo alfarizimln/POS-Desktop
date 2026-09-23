@@ -5,7 +5,7 @@ import { TransactionHistory } from './TransactionHistory';
 import { DailyReport } from './DailyReport';
 import { UserManagement } from './UserManagement';
 import { Settings } from './Settings';
-import { Modal, Btn, Alert, Badge, EmptyState, Field } from '../components/ui';
+import { Modal, Btn, Alert, Badge, EmptyState, Field, LogoMark, Segmented } from '../components/ui';
 
 function formatRupiah(n: number) {
   return 'Rp ' + n.toLocaleString('id-ID');
@@ -52,7 +52,7 @@ export function KasirPage({ onLogout }: { onLogout: () => void }) {
   const [showReport, setShowReport] = useState(false);
   const [showUsers, setShowUsers] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [namaUsaha, setNamaUsaha] = useState('POS Rumah Makan');
+  const [namaUsaha, setNamaUsaha] = useState('E-Restoran');
   const [alamatUsaha, setAlamatUsaha] = useState('');
   const [kasirNama, setKasirNama] = useState('');
   const [modeLokal, setModeLokal] = useState(false);
@@ -172,34 +172,25 @@ export function KasirPage({ onLogout }: { onLogout: () => void }) {
   return (
     <div className="flex h-full flex-col bg-gray-100">
       {/* Header utama */}
-      <header className="bg-white border-b border-gray-200 shadow-soft shrink-0">
+      <header className="bg-white border-b border-gray-200 shrink-0">
         <div className="flex items-center justify-between px-5 h-14">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center text-xl shrink-0">
-              🍜
-            </div>
+            <LogoMark size={30} />
             <div className="min-w-0">
-              <h1 className="font-bold text-gray-800 truncate leading-tight">{namaUsaha}</h1>
+              <h1 className="font-semibold text-gray-900 truncate leading-tight">{namaUsaha}</h1>
               {alamatUsaha && <p className="text-xs text-gray-500 truncate leading-tight">{alamatUsaha}</p>}
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="hidden sm:block text-right">
-              <div className="text-xs text-gray-500">Kasir</div>
-              <div className="text-sm font-semibold text-gray-800">{kasirNama || '-'}</div>
-            </div>
-
+          <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
               {modeLokal ? (
                 <Badge tone="gray">Mode Lokal</Badge>
               ) : (
                 <>
-                  <Badge
-                    tone={syncStatus.pendingCount > 0 ? 'amber' : 'green'}
-                  >
+                  <Badge tone={syncStatus.pendingCount > 0 ? 'amber' : 'green'}>
                     {syncing
-                      ? 'Menyinkron...'
+                      ? 'Menyinkron…'
                       : syncStatus.pendingCount > 0
                         ? `${syncStatus.pendingCount} order tertunda`
                         : syncStatus.lastSyncAt
@@ -213,13 +204,20 @@ export function KasirPage({ onLogout }: { onLogout: () => void }) {
               )}
             </div>
 
+            <span className="w-px h-5 bg-gray-200" />
+
+            <div className="hidden sm:block text-right">
+              <div className="text-xs text-gray-500">Kasir</div>
+              <div className="text-sm font-semibold text-gray-900">{kasirNama || '-'}</div>
+            </div>
+
             <div className="flex items-center gap-2">
-              <Btn variant="secondary" onClick={() => setShowSettings(true)} className="px-3 py-1.5 text-sm">
+              <Btn variant="secondary" size="sm" onClick={() => setShowSettings(true)}>
                 Setelan
               </Btn>
               <Btn
                 variant="danger"
-                className="px-3 py-1.5 text-sm"
+                size="sm"
                 onClick={async () => {
                   await window.api.auth.logout();
                   onLogout();
@@ -232,37 +230,37 @@ export function KasirPage({ onLogout }: { onLogout: () => void }) {
         </div>
 
         {/* Toolbar aksi */}
-        <div className="flex items-center gap-2 px-5 pb-3 flex-wrap">
-          <Btn variant="primary" className="px-3 py-1.5 text-sm" onClick={() => setShowMenuManagement(true)}>
+        <div className="flex items-center gap-2 px-5 py-2.5 border-t border-gray-100 flex-wrap">
+          <Btn variant="primary" size="sm" onClick={() => setShowMenuManagement(true)}>
             Kelola Menu
           </Btn>
-          <Btn variant="secondary" className="px-3 py-1.5 text-sm" onClick={() => setShowHistory(true)}>
+          <Btn variant="secondary" size="sm" onClick={() => setShowHistory(true)}>
             Riwayat
           </Btn>
-          <Btn variant="secondary" className="px-3 py-1.5 text-sm" onClick={() => setShowReport(true)}>
+          <Btn variant="secondary" size="sm" onClick={() => setShowReport(true)}>
             Laporan
           </Btn>
-          <Btn variant="secondary" className="px-3 py-1.5 text-sm" onClick={() => setShowUsers(true)}>
+          <Btn variant="secondary" size="sm" onClick={() => setShowUsers(true)}>
             Kasir
           </Btn>
-          <span className="mx-1 w-px h-5 bg-gray-200" />
-          <Btn variant="secondary" className="px-3 py-1.5 text-sm" onClick={() => { loadPrinters(); setShowPrinterSetup(true); }}>
+          <span className="mx-1 w-px h-4 bg-gray-200" />
+          <Btn variant="secondary" size="sm" onClick={() => { loadPrinters(); setShowPrinterSetup(true); }}>
             Printer
           </Btn>
-          <Btn variant="secondary" className="px-3 py-1.5 text-sm" onClick={handleTestPrint}>
+          <Btn variant="secondary" size="sm" onClick={handleTestPrint}>
             Test Print
           </Btn>
           <Btn
             variant="secondary"
-            className="px-3 py-1.5 text-sm"
+            size="sm"
             onClick={handleCetakUlang}
             disabled={!lastOrderId}
           >
             Cetak Ulang
           </Btn>
           {!modeLokal && (
-            <Btn variant="secondary" className="px-3 py-1.5 text-sm text-amber-600 hover:bg-amber-50" onClick={handleSync} disabled={syncing}>
-              {syncing ? 'Menyinkron...' : 'Sinkronkan'}
+            <Btn variant="secondary" size="sm" onClick={handleSync} disabled={syncing}>
+              {syncing ? 'Menyinkron…' : 'Sinkronkan'}
             </Btn>
           )}
         </div>
@@ -272,15 +270,15 @@ export function KasirPage({ onLogout }: { onLogout: () => void }) {
       <div className="flex flex-1 overflow-hidden">
         {/* Panel kiri: Menu */}
         <div className="flex-1 flex flex-col overflow-hidden">
-          <div className="flex gap-2 p-4 pb-2 overflow-x-auto shrink-0">
+          <div className="flex gap-1 px-4 pt-3 border-b border-gray-200 overflow-x-auto shrink-0">
             {kategoris.map(k => (
               <button
                 key={k}
                 onClick={() => setSelectedKategori(k)}
-                className={`px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition ${
+                className={`pb-2 px-1.5 text-sm whitespace-nowrap border-b-2 transition-colors ${
                   selectedKategori === k
-                    ? 'bg-blue-600 text-white shadow-soft'
-                    : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'
+                    ? 'border-accent text-gray-900 font-semibold'
+                    : 'border-transparent text-gray-500 hover:text-gray-800'
                 }`}
               >
                 {k}
@@ -288,22 +286,22 @@ export function KasirPage({ onLogout }: { onLogout: () => void }) {
             ))}
           </div>
 
-          <div className="flex-1 overflow-y-auto px-4 pb-4">
+          <div className="flex-1 overflow-y-auto px-4 py-4">
             {filtered.length === 0 && <EmptyState text="Belum ada menu. Tambah lewat Kelola Menu." />}
             <div className="grid grid-cols-3 gap-3">
               {filtered.map((item) => (
                 <button
                   key={item.id}
                   onClick={() => addItem({ menuItemId: item.id, nama: item.nama, harga: item.harga, qty: 1 })}
-                  className="card p-4 text-left hover:shadow-md active:scale-[.98] transition"
+                  className="card p-3 text-left hover:border-accent hover:bg-gray-50 transition-colors"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <Badge tone="blue">{item.kategori}</Badge>
-                      <div className="mt-2 font-semibold text-gray-800 truncate">{item.nama}</div>
+                      <Badge tone="gray">{item.kategori}</Badge>
+                      <div className="mt-1.5 font-medium text-gray-900 truncate">{item.nama}</div>
                     </div>
                   </div>
-                  <div className="mt-3 text-blue-600 font-bold">{formatRupiah(item.harga)}</div>
+                  <div className="mt-2 text-accent font-bold tabular-nums">{formatRupiah(item.harga)}</div>
                 </button>
               ))}
             </div>
@@ -312,23 +310,18 @@ export function KasirPage({ onLogout }: { onLogout: () => void }) {
 
         {/* Panel kanan: Keranjang */}
         <div className="w-96 bg-white border-l border-gray-200 flex flex-col shrink-0">
-          <div className="px-4 pt-4 border-b border-gray-100">
-            <div className="flex gap-1">
-              {(['DINE_IN', 'TAKE_AWAY'] as const).map((t) => (
-                <button
-                  key={t}
-                  onClick={() => {
-                    setOrderType(t);
-                    setSelectedTableId(null);
-                  }}
-                  className={`flex-1 py-2 rounded-lg text-sm font-semibold transition ${
-                    orderType === t ? 'bg-blue-600 text-white shadow-soft' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                >
-                  {t === 'DINE_IN' ? 'Makan di Tempat' : 'Bawa Pulang'}
-                </button>
-              ))}
-            </div>
+          <div className="px-4 pt-4 border-b border-gray-200">
+            <Segmented
+              value={orderType}
+              onChange={(v) => {
+                setOrderType(v as 'DINE_IN' | 'TAKE_AWAY');
+                setSelectedTableId(null);
+              }}
+              options={[
+                { value: 'DINE_IN', label: 'Makan di Tempat' },
+                { value: 'TAKE_AWAY', label: 'Bawa Pulang' },
+              ]}
+            />
 
             {orderType === 'DINE_IN' && (
               <button
@@ -337,10 +330,10 @@ export function KasirPage({ onLogout }: { onLogout: () => void }) {
                   setTables(rows);
                   setShowTablePicker(true);
                 }}
-                className="btn btn-secondary w-full mt-2 py-2 text-sm"
+                className="btn btn-secondary w-full mt-2"
               >
                 {selectedTableId
-                  ? `Meja ${tables.find(t => t.id === selectedTableId)?.nomor_meja ?? ''} ✓`
+                  ? `Meja ${tables.find(t => t.id === selectedTableId)?.nomor_meja ?? ''}`
                   : 'Pilih Meja'}
               </button>
             )}
@@ -354,12 +347,12 @@ export function KasirPage({ onLogout }: { onLogout: () => void }) {
               <div key={item.menuItemId} className="card p-3">
                 <div className="flex justify-between items-start gap-2">
                   <div className="min-w-0">
-                    <div className="font-semibold text-sm text-gray-800 truncate">{item.nama}</div>
-                    <div className="text-xs text-gray-500">{formatRupiah(item.harga)}</div>
+                    <div className="font-medium text-sm text-gray-900 truncate">{item.nama}</div>
+                    <div className="text-xs text-gray-500 tabular-nums">{formatRupiah(item.harga)}</div>
                   </div>
                   <button
                     onClick={() => removeItem(item.menuItemId)}
-                    className="text-red-400 hover:text-red-600 text-xs font-semibold shrink-0"
+                    className="text-red-400 hover:text-red-600 text-xs font-medium shrink-0"
                   >
                     Hapus
                   </button>
@@ -367,41 +360,41 @@ export function KasirPage({ onLogout }: { onLogout: () => void }) {
                 <div className="flex items-center gap-2 mt-3">
                   <button
                     onClick={() => updateQty(item.menuItemId, item.qty - 1)}
-                    className="w-8 h-8 rounded-lg bg-gray-100 text-gray-600 font-bold hover:bg-gray-200 transition"
+                    className="w-7 h-7 rounded bg-gray-100 text-gray-600 font-semibold hover:bg-gray-200 transition-colors"
                   >
                     −
                   </button>
-                  <span className="w-8 text-center text-sm font-semibold">{item.qty}</span>
+                  <span className="w-8 text-center text-sm font-semibold tabular-nums">{item.qty}</span>
                   <button
                     onClick={() => updateQty(item.menuItemId, item.qty + 1)}
-                    className="w-8 h-8 rounded-lg bg-gray-100 text-gray-600 font-bold hover:bg-gray-200 transition"
+                    className="w-7 h-7 rounded bg-gray-100 text-gray-600 font-semibold hover:bg-gray-200 transition-colors"
                   >
                     +
                   </button>
-                  <span className="ml-auto font-bold text-sm text-gray-800">{formatRupiah(item.harga * item.qty)}</span>
+                  <span className="ml-auto font-bold text-sm text-gray-900 tabular-nums">{formatRupiah(item.harga * item.qty)}</span>
                 </div>
               </div>
             ))}
           </div>
 
           {/* Footer */}
-          <div className="px-4 py-4 border-t border-gray-200 space-y-3 shrink-0">
+          <div className="px-4 py-3 border-t border-gray-200 space-y-3 shrink-0">
             <div className="flex justify-between items-baseline">
-              <span className="text-gray-600 font-semibold">Total</span>
-              <span className="text-2xl font-bold text-gray-900">{formatRupiah(total)}</span>
+              <span className="text-sm font-medium text-gray-600">Total</span>
+              <span className="text-2xl font-bold text-gray-900 tabular-nums">{formatRupiah(total)}</span>
             </div>
             <div className="flex gap-2">
               <button
                 disabled={cart.length === 0}
                 onClick={clearCart}
-                className="btn btn-danger px-4 py-3 text-sm"
+                className="btn btn-danger btn-lg"
               >
                 Kosongkan
               </button>
               <button
                 disabled={cart.length === 0}
                 onClick={openBayar}
-                className="btn btn-primary flex-1 py-3 text-lg"
+                className="btn btn-primary btn-lg flex-1"
               >
                 Bayar
               </button>
@@ -415,23 +408,19 @@ export function KasirPage({ onLogout }: { onLogout: () => void }) {
         <Modal title="Pembayaran" onClose={() => setShowBayar(false)} size="sm">
           <div className="space-y-4">
             <div className="text-center">
-              <div className="text-xs text-gray-500 font-semibold uppercase tracking-wide">Total Tagihan</div>
-              <div className="text-3xl font-bold text-blue-600">{formatRupiah(total)}</div>
+              <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Total Tagihan</div>
+              <div className="text-3xl font-bold text-accent tabular-nums">{formatRupiah(total)}</div>
             </div>
 
-            <div className="flex gap-1">
-              {(['TUNAI', 'DEBIT', 'QRIS'] as const).map(m => (
-                <button
-                  key={m}
-                  onClick={() => { setMetodeBayar(m); setBayarError(''); }}
-                  className={`flex-1 py-2 rounded-lg font-semibold text-sm transition ${
-                    metodeBayar === m ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                >
-                  {m}
-                </button>
-              ))}
-            </div>
+            <Segmented
+              value={metodeBayar}
+              onChange={(v) => { setMetodeBayar(v as 'TUNAI' | 'DEBIT' | 'QRIS'); setBayarError(''); }}
+              options={[
+                { value: 'TUNAI', label: 'Tunai' },
+                { value: 'DEBIT', label: 'Debit' },
+                { value: 'QRIS', label: 'QRIS' },
+              ]}
+            />
 
             {metodeBayar === 'TUNAI' && (
               <>
@@ -442,14 +431,14 @@ export function KasirPage({ onLogout }: { onLogout: () => void }) {
                     placeholder="0"
                     value={jumlahBayar}
                     onChange={(e) => setJumlahBayar(e.target.value)}
-                    className="input !py-3 text-lg font-semibold text-center"
+                    className="input !h-12 !text-xl !font-semibold !text-center tabular-nums"
                     autoFocus
                   />
                 </Field>
-                <div className="flex flex-wrap gap-2">
+                <div className="grid grid-cols-3 gap-2">
                   <button
                     onClick={() => setJumlahBayar(String(total))}
-                    className="btn btn-secondary flex-1 px-2 py-2 text-sm"
+                    className="btn btn-secondary"
                   >
                     Uang pas
                   </button>
@@ -457,13 +446,13 @@ export function KasirPage({ onLogout }: { onLogout: () => void }) {
                     <button
                       key={q}
                       onClick={() => setJumlahBayar(String(q))}
-                      className="btn btn-secondary flex-1 px-2 py-2 text-sm"
+                      className="btn btn-secondary"
                     >
                       {q / 1000}rb
                     </button>
                   ))}
                 </div>
-                <div className={`text-sm font-semibold text-right ${kembalian >= 0 ? 'text-green-600' : 'text-red-500'}`}>
+                <div className={`text-sm font-semibold text-right tabular-nums ${kembalian >= 0 ? 'text-green-700' : 'text-red-600'}`}>
                   {kembalian >= 0 ? `Kembalian: ${formatRupiah(kembalian)}` : 'Jumlah bayar kurang'}
                 </div>
               </>
@@ -487,12 +476,12 @@ export function KasirPage({ onLogout }: { onLogout: () => void }) {
             <div className="flex gap-2 pt-1">
               <Btn
                 variant="secondary"
-                className="flex-1 py-3"
+                className="flex-1"
                 onClick={() => { setShowBayar(false); setJumlahBayar(''); setBayarError(''); }}
               >
                 Batal
               </Btn>
-              <Btn variant="success" className="flex-1 py-3" onClick={handleBayar}>
+              <Btn variant="primary" className="flex-1" onClick={handleBayar}>
                 Konfirmasi
               </Btn>
             </div>
@@ -506,7 +495,7 @@ export function KasirPage({ onLogout }: { onLogout: () => void }) {
           <div className="space-y-3">
             <p className="text-sm text-gray-500 leading-relaxed">
               Pilih printer di <b>Devices and Printers</b>, lalu di tab <b>Sharing</b> centang
-              "Share this printer". Masukkan nama share di bawah.
+              &quot;Share this printer&quot;. Masukkan nama share di bawah.
             </p>
 
             {printerNames.length > 0 && (
@@ -543,10 +532,10 @@ export function KasirPage({ onLogout }: { onLogout: () => void }) {
             </Field>
 
             <div className="flex gap-2 pt-1">
-              <Btn variant="primary" className="flex-1 py-2.5" onClick={handleTestPrint}>
+              <Btn variant="primary" className="flex-1" onClick={handleTestPrint}>
                 Test Print
               </Btn>
-              <Btn variant="secondary" className="flex-1 py-2.5" onClick={() => setShowPrinterSetup(false)}>
+              <Btn variant="secondary" className="flex-1" onClick={() => setShowPrinterSetup(false)}>
                 Tutup
               </Btn>
             </div>
@@ -557,7 +546,7 @@ export function KasirPage({ onLogout }: { onLogout: () => void }) {
       {/* Modal Pilih Meja */}
       {showTablePicker && (
         <Modal title="Pilih Meja" onClose={() => setShowTablePicker(false)} size="sm">
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-2">
             {tables.map((t) => (
               <button
                 key={t.id}
@@ -565,10 +554,10 @@ export function KasirPage({ onLogout }: { onLogout: () => void }) {
                   setSelectedTableId(t.id);
                   setShowTablePicker(false);
                 }}
-                className={`py-4 rounded-xl font-bold transition ${
+                className={`py-4 rounded-lg border font-semibold transition-colors ${
                   selectedTableId === t.id
-                    ? 'bg-blue-600 text-white shadow-soft'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'bg-accent text-white border-accent'
+                    : 'bg-white text-gray-700 border-gray-300 hover:border-accent hover:bg-gray-50'
                 }`}
               >
                 {t.nomor_meja}

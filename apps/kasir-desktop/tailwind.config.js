@@ -6,8 +6,13 @@ module.exports = {
       fontFamily: {
         sans: ['"Segoe UI"', 'system-ui', '-apple-system', 'sans-serif'],
       },
-      boxShadow: {
-        soft: '0 1px 2px 0 rgb(17 24 39 / 0.04), 0 1px 3px 0 rgb(17 24 39 / 0.06)',
+      colors: {
+        accent: {
+          DEFAULT: '#0f766e',
+          hover: '#115e59',
+          soft: '#ccfbf1',
+          tint: '#f0fdfa',
+        },
       },
     },
   },

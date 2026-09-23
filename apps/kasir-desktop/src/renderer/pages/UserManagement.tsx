@@ -81,7 +81,7 @@ export function UserManagement({ onClose }: { onClose: () => void }) {
       {pesan && <Alert tone={pesan.ok ? 'ok' : 'err'} className="mb-4">{pesan.teks}</Alert>}
 
       <div className="card p-4 mb-4">
-        <div className="font-bold text-sm text-gray-700 mb-3">Tambah Kasir Baru</div>
+        <div className="font-semibold text-sm text-gray-700 mb-3">Tambah Kasir Baru</div>
         <div className="flex gap-2">
           <Field label="">
             <input
@@ -101,19 +101,19 @@ export function UserManagement({ onClose }: { onClose: () => void }) {
               className="input !w-36"
             />
           </Field>
-          <Btn variant="primary" className="self-end px-4 py-2" onClick={handleTambah}>Tambah</Btn>
+          <Btn variant="primary" className="self-end" onClick={handleTambah}>Tambah</Btn>
         </div>
       </div>
 
       <div className="space-y-2 max-h-72 overflow-y-auto">
-        {users.map((u, idx) => (
+        {users.map((u) => (
           <div key={u.id} className="card flex items-center justify-between px-4 py-3">
             <div className="min-w-0">
-              <div className="font-semibold text-sm flex items-center gap-2">
-                {idx === 0 ? '👑' : ''}{u.nama}
-                <Badge tone={idx === 0 ? 'blue' : 'gray'}>{u.role}</Badge>
+              <div className="font-medium text-sm flex items-center gap-2">
+                {u.nama}
+                <Badge tone={u.role === 'admin' ? 'teal' : 'gray'}>{u.role}</Badge>
               </div>
-              <div className="text-xs text-gray-400">{u.id.slice(0, 8)}</div>
+              <div className="text-xs text-gray-400 font-mono">{u.id.slice(0, 8)}</div>
               {editId === u.id && (
                 <div className="flex items-center gap-2 mt-2">
                   <input
@@ -125,19 +125,19 @@ export function UserManagement({ onClose }: { onClose: () => void }) {
                     onKeyDown={(e) => { if (e.key === 'Enter') simpanPin(); }}
                     className="input !w-40"
                   />
-                  <Btn variant="success" className="px-3 py-2 text-sm" onClick={simpanPin}>Simpan</Btn>
-                  <Btn variant="secondary" className="px-3 py-2 text-sm" onClick={() => setEditId(null)}>Batal</Btn>
+                  <Btn variant="primary" size="sm" onClick={simpanPin}>Simpan</Btn>
+                  <Btn variant="secondary" size="sm" onClick={() => setEditId(null)}>Batal</Btn>
                 </div>
               )}
             </div>
             <div className="flex items-center gap-2">
-              <Btn variant="secondary" className="px-3 py-1.5 text-sm" onClick={() => handleGantiNama(u.id)}>
+              <Btn variant="secondary" size="sm" onClick={() => handleGantiNama(u.id)}>
                 Ganti Nama
               </Btn>
-              <Btn variant="secondary" className="px-3 py-1.5 text-sm" onClick={() => handleGantiPin(u.id)}>
+              <Btn variant="secondary" size="sm" onClick={() => handleGantiPin(u.id)}>
                 Ganti PIN
               </Btn>
-              <Btn variant="danger" className="px-3 py-1.5 text-sm" onClick={() => handleHapus(u)}>
+              <Btn variant="danger" size="sm" onClick={() => handleHapus(u)}>
                 Hapus
               </Btn>
             </div>

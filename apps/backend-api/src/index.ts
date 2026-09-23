@@ -16,7 +16,7 @@ await app.register(authRoutes);
 await app.register(syncRoutes);
 
 app.get('/', async () => {
-  return { name: 'POS Rumah Makan API', version: '0.1.0' };
+  return { name: 'E-Restoran API', version: '0.1.0' };
 });
 
 try {

@@ -30,6 +30,7 @@ contextBridge.exposeInMainWorld('api', {
   },
   report: {
     daily: (tanggal: string) => ipcRenderer.invoke('report:daily', tanggal),
+    exportDaily: (tanggal: string) => ipcRenderer.invoke('report:exportDaily', tanggal),
   },
   user: {
     list: () => ipcRenderer.invoke('user:list'),

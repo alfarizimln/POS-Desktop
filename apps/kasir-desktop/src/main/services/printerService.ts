@@ -50,11 +50,15 @@ export async function getPrinterNames(): Promise<string[]> {
 }
 
 function buildHeader(p: ThermalPrinter, title: string, subtitle?: string) {
-  const namaToko = getConfig('nama_toko') || 'POS Rumah Makan';
+  const namaToko = getConfig('nama_usaha') || getConfig('nama_toko') || 'E-Restoran';
+  const alamat = getConfig('alamat_usaha');
+  const telp = getConfig('telp_usaha');
   p.alignCenter();
   p.bold(true);
   p.println(namaToko);
   p.bold(false);
+  if (alamat) p.println(alamat);
+  if (telp) p.println(telp);
   if (subtitle) p.println(subtitle);
   p.drawLine('=');
   p.newLine();
@@ -65,6 +69,31 @@ function buildHeader(p: ThermalPrinter, title: string, subtitle?: string) {
     p.bold(false);
   }
   p.alignLeft();
+}
+
+function formatRupiah(n: number): string {
+  return 'Rp ' + n.toLocaleString('id-ID');
+}
+
+const RECEIPT_WIDTH = 42;
+
+function itemHeader(priceWidth: number, qtyWidth = 5): string {
+  const leftWidth = RECEIPT_WIDTH - qtyWidth - 1 - priceWidth;
+  return 'No  Item'.padEnd(leftWidth) + 'Qty'.padStart(qtyWidth) + ' ' + 'Harga'.padStart(priceWidth);
+}
+
+function itemRow(index: number, nama: string, qty: number, subtotal: number, priceWidth: number, qtyWidth = 5): string {
+  const leftWidth = RECEIPT_WIDTH - qtyWidth - 1 - priceWidth;
+  const prefix = `${index}. `;
+  const nameMax = leftWidth - prefix.length - 1;
+  const name = nama.length > nameMax ? nama.slice(0, nameMax) + '.' : nama;
+  const left = (prefix + name).padEnd(leftWidth);
+  const qtyText = 'x' + String(qty).padStart(qtyWidth - 1);
+  return left + qtyText + ' ' + formatRupiah(subtotal).padStart(priceWidth);
+}
+
+function itemColumns(items: Array<{ nama: string; qty: number; harga: number }>): number {
+  return items.reduce((max, it) => Math.max(max, formatRupiah(it.harga * it.qty).length), formatRupiah(0).length);
 }
 
 function buildFooter(p: ThermalPrinter) {
@@ -108,20 +137,21 @@ export async function printOrder(order: PrintableOrder): Promise<void> {
   p.drawLine('-');
 
   const total = order.items.reduce((sum, item) => sum + item.harga * item.qty, 0);
+  const priceWidth = itemColumns(order.items);
+  p.println(itemHeader(priceWidth));
+  p.drawLine('-');
+
   order.items.forEach((item, index) => {
-    const line = `${index + 1}. ${item.nama}`;
-    p.println(line);
-    const sub = `    x${item.qty}                    ${item.harga * item.qty}`;
-    p.println(sub);
+    p.println(itemRow(index + 1, item.nama, item.qty, item.harga * item.qty, priceWidth));
   });
 
   p.drawLine('=');
-  p.leftRight('TOTAL', String(total));
+  p.leftRight('TOTAL', formatRupiah(total));
   p.drawLine('-');
 
   if (order.metode === 'TUNAI') {
-    p.leftRight('Bayar', String(order.jumlah_dibayar));
-    p.leftRight('Kembalian', String(order.kembalian));
+    p.leftRight('Bayar', formatRupiah(order.jumlah_dibayar));
+    p.leftRight('Kembalian', formatRupiah(order.kembalian));
   } else {
     p.leftRight('Metode', order.metode);
   }
@@ -170,15 +200,16 @@ export async function printOrderById(orderId: string): Promise<void> {
   await printOrder(order);
 }
 
-function formatNominal(n: number): string {
-  return n.toLocaleString('id-ID');
-}
-
 export async function printDailyReport(report: DailyReportData): Promise<void> {
   const p = printerFactory();
   buildHeader(p, 'LAPORAN HARIAN', report.tanggal);
 
-  p.leftRight('Total Penjualan', formatNominal(report.summary.total_penjualan));
+  const saldoAwal = Number(getConfig(`kas_awal:${report.tanggal}`) || 0);
+  const totalTunai = report.byMetode.find((m) => m.metode === 'TUNAI')?.nominal || 0;
+
+  p.leftRight('Saldo Awal', formatRupiah(saldoAwal));
+  p.leftRight('Total Penjualan', formatRupiah(report.summary.total_penjualan));
+  p.leftRight('Saldo Akhir (Tunai)', formatRupiah(saldoAwal + totalTunai));
   p.leftRight('Jumlah Transaksi', String(report.summary.jumlah_order));
   p.newLine();
 
@@ -192,19 +223,19 @@ export async function printDailyReport(report: DailyReportData): Promise<void> {
 
   p.println('PER METODE');
   for (const r of report.byMetode) {
-    p.leftRight(`${metodeLabel(r.metode)} (${r.jumlah})`, formatNominal(r.nominal));
+    p.leftRight(`${metodeLabel(r.metode)} (${r.jumlah})`, formatRupiah(r.nominal));
   }
   p.newLine();
 
   p.println('PER JENIS');
   for (const r of report.byType) {
-    p.leftRight(`${tipeLabel(r.tipe)} (${r.jumlah})`, formatNominal(r.nominal));
+    p.leftRight(`${tipeLabel(r.tipe)} (${r.jumlah})`, formatRupiah(r.nominal));
   }
   p.newLine();
 
   p.println('PER KASIR');
   for (const r of report.byKasir) {
-    p.leftRight(`${r.kasir} (${r.jumlah})`, formatNominal(r.nominal));
+    p.leftRight(`${r.kasir} (${r.jumlah})`, formatRupiah(r.nominal));
   }
 
   buildFooter(p);

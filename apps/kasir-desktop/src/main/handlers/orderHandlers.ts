@@ -1,9 +1,10 @@
-import { ipcMain } from 'electron';
+import { ipcMain, dialog } from 'electron';
 import db from '../database/db';
 import { randomUUID } from 'crypto';
 import { runSync } from '../services/syncService';
 import { printOrderById } from '../services/printerService';
 import { getDailyReport } from '../services/reportService';
+import { exportDailyReportExcel } from '../services/exportService';
 
 interface OrderItem {
   menuItemId: string;
@@ -194,5 +195,23 @@ export function registerOrderHandlers() {
 
   ipcMain.handle('report:daily', (_event, tanggal: string) => {
     return getDailyReport(tanggal);
+  });
+
+  ipcMain.handle('report:exportDaily', async (_event, tanggal: string) => {
+    const tanggalValid = String(tanggal || '').slice(0, 10);
+    if (!tanggalValid) return { success: false, error: 'Tanggal tidak valid' };
+    try {
+      const result = await dialog.showSaveDialog({
+        title: 'Ekspor Laporan Harian',
+        defaultPath: `Laporan-Harian-${tanggalValid}.xlsx`,
+        filters: [{ name: 'Excel Workbook', extensions: ['xlsx'] }],
+      });
+      if (result.canceled || !result.filePath) return { cancelled: true };
+      await exportDailyReportExcel(tanggalValid, result.filePath);
+      return { success: true, path: result.filePath };
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      return { success: false, error: message };
+    }
   });
 }

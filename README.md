@@ -1,6 +1,6 @@
-# POS Rumah Makan
+# E-Restoran
 
-Aplikasi POS rumah makan multi-tenant (SaaS): kasir desktop berbasis Electron + SQLite lokal, terhubung ke cloud (Supabase) untuk sync & dashboard.
+Aplikasi POS restoran (E-Restoran) — kasir desktop berbasis Electron + SQLite lokal, terhubung ke cloud (Supabase) untuk sync & dashboard.
 
 ## Prinsip Development
 
@@ -61,5 +61,9 @@ node -v   # harus v16.17.0
 - [x] Tahap 13: Packaging installer (electron-builder NSIS, x64 + ia32)
 - [x] Tahap 14–16: Fitur lanjutan — pengaturan sinkronisasi & mode lokal, kelola kasir multi-user, profil usaha, dan perbaikan performa antrean.
 - [x] Tahap 17: Ikon resmi (`.ico` multi-res) + cetak laporan harian ke thermal printer; packaging x64 + ia32 dengan ikon ter-embed.
+- [x] Tahap 18: Desain ulang UI (minimal & rapi — tanpa emoji/gradien/biru-generik, aksen teal) + ikon logo baru.
+- [x] Tahap 19: Struk rapi (format Rupiah, kolom qty sejajar, kepala surat mengikuti nama/alamat/telp usaha) + saldo awal kas & saldo akhir per tanggal laporan.
+- [x] Tahap 20: Ekspor Laporan Harian ke Excel (`.xlsx`) — sheet Ringkasan + Detail Transaksi per item, via `exceljs`.
+- [x] Tahap 21: Rebranding nama aplikasi "E-Restoran" (window title, installer, Start Menu, fallback header; folder data lama dipertahankan di `%APPDATA%\POS Rumah Makan`).
 
 Note: Tahap 0 (validasi hardware printer) tertunda sampai uji di PC Windows 7 dengan printer AnyPOS.

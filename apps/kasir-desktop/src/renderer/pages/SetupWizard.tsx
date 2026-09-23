@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Alert, Btn } from '../components/ui';
+import { Alert, Btn, LogoMark } from '../components/ui';
 
 interface Props {
   onComplete: () => void;
@@ -62,28 +62,26 @@ export function SetupWizard({ onComplete }: Props) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-xl shadow-md border border-gray-200 w-full max-w-md p-7">
         <div className="text-center mb-6">
-          <div className="w-16 h-16 mx-auto mb-3 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-3xl shadow-soft">
-            🍜
-          </div>
-          <h1 className="text-2xl font-bold text-gray-800">POS Rumah Makan</h1>
-          <p className="text-gray-500 text-sm mt-1">Pengaturan Awal</p>
+          <LogoMark size={52} rounded="rounded-xl" />
+          <h1 className="text-lg font-semibold text-gray-900 mt-3">E-Restoran</h1>
+          <p className="text-gray-500 text-sm mt-0.5">Pengaturan awal</p>
         </div>
 
         <div className="flex justify-center gap-2 mb-6">
           {[1, 2, 3].map((s) => (
             <div
               key={s}
-              className={`w-10 h-1 rounded-full transition ${step >= s ? 'bg-blue-600' : 'bg-gray-200'}`}
+              className={`w-8 h-1.5 rounded-full transition ${step >= s ? 'bg-accent' : 'bg-gray-200'}`}
             />
           ))}
         </div>
 
         {step === 1 && (
           <div className="space-y-4">
-            <h2 className="text-lg font-semibold text-center">Profil Toko</h2>
+            <h2 className="text-base font-semibold text-gray-900 text-center">Profil Toko</h2>
             <span className="label">Nama Toko</span>
             <input
               name="nama_outlet"
@@ -103,7 +101,8 @@ export function SetupWizard({ onComplete }: Props) {
             {error && <Alert tone="err">{error}</Alert>}
             <Btn
               variant="primary"
-              className="w-full py-3 text-lg"
+              size="lg"
+              className="w-full"
               onClick={() => {
                 if (!form.nama_outlet || !form.nama_pemilik) {
                   setError('Isi nama toko dan pemilik');
@@ -115,11 +114,11 @@ export function SetupWizard({ onComplete }: Props) {
             >
               Selanjutnya
             </Btn>
-            <div className="pt-2 text-center">
-              <span className="block text-xs text-gray-400 mb-2">
+            <div className="pt-2 text-center space-y-2">
+              <span className="block text-xs text-gray-400">
                 Tidak ingin buat akun sekarang?
               </span>
-              <Btn variant="ghost" className="w-full" onClick={handleModeLokal}>
+              <Btn variant="secondary" className="w-full" onClick={handleModeLokal}>
                 Lanjut Tanpa Akun (Mode Lokal)
               </Btn>
             </div>
@@ -128,7 +127,7 @@ export function SetupWizard({ onComplete }: Props) {
 
         {step === 2 && (
           <div className="space-y-4">
-            <h2 className="text-lg font-semibold text-center">Buat Akun</h2>
+            <h2 className="text-base font-semibold text-gray-900 text-center">Buat Akun</h2>
             <span className="label">Email</span>
             <input
               name="email"
@@ -149,11 +148,11 @@ export function SetupWizard({ onComplete }: Props) {
             />
             {error && <Alert tone="err">{error}</Alert>}
             <div className="flex gap-2">
-              <Btn variant="secondary" className="flex-1 py-3" onClick={() => setStep(1)}>
+              <Btn variant="secondary" className="flex-1" onClick={() => setStep(1)}>
                 Kembali
               </Btn>
-              <Btn variant="primary" className="flex-1 py-3" onClick={handleRegister} disabled={loading}>
-                {loading ? 'Mendaftar...' : 'Daftar'}
+              <Btn variant="primary" className="flex-1" onClick={handleRegister} disabled={loading}>
+                {loading ? 'Mendaftar…' : 'Daftar'}
               </Btn>
             </div>
           </div>
@@ -161,16 +160,18 @@ export function SetupWizard({ onComplete }: Props) {
 
         {step === 3 && (
           <div className="text-center space-y-4">
-            <div className="w-16 h-16 mx-auto rounded-2xl bg-green-100 text-green-600 flex items-center justify-center text-3xl">
-              ✓
+            <div className="mx-auto w-12 h-12 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center justify-center">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 12.5l5.5 5.5L20 7" />
+              </svg>
             </div>
-            <h2 className="text-lg font-semibold">Siap Digunakan!</h2>
+            <h2 className="text-base font-semibold text-gray-900">Siap Digunakan!</h2>
             <p className="text-gray-500 text-sm leading-relaxed">
               {modeLokal
                 ? 'Aplikasi siap dipakai secara offline. Sinkronisasi cloud bisa diaktifkan belakangan bila diperlukan.'
                 : 'Akun dan toko Anda sudah terdaftar. Aplikasi siap untuk digunakan.'}
             </p>
-            <Btn variant="success" className="w-full py-3 text-lg" onClick={onComplete}>
+            <Btn variant="primary" size="lg" className="w-full" onClick={onComplete}>
               Mulai Kasir
             </Btn>
           </div>

@@ -68,6 +68,15 @@ declare global {
           summary: { jumlah_order: number; total_penjualan: number };
           byMetode: Array<{ metode: string; jumlah: number; nominal: number }>;
           byType: Array<{ tipe: string; jumlah: number; nominal: number }>;
+          byKasir: Array<{ kasir: string; jumlah: number; nominal: number }>;
+          saldo_awal: number;
+          total_tunai: number;
+        }>;
+        exportDaily: (tanggal: string) => Promise<{
+          success: boolean;
+          cancelled?: boolean;
+          path?: string;
+          error?: string;
         }>;
       };
       user: {
